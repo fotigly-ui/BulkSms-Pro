@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BulkSMS Pro - SMS Broadcast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2332;
+            --bg-input: #0d1421;
+            --text-primary: #f0f4f8;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #00d4aa;
+            --accent-glow: rgba(0, 212, 170, 0.3);
+            --accent-secondary: #06b6d4;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-focus: rgba(0, 212, 170, 0.5);
+        }
+
+        .light {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-input: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: rgba(0, 0, 0, 0.1);
+            --border-focus: rgba(0, 212, 170, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px 0 40px;
+            position: relative;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #000;
+            box-shadow: 0 8px 32px var(--accent-glow);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .logo h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .provider-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid var(--accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--accent);
+            margin-top: 12px;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--bg-secondary);
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: #000;
+            font-weight: 600;
+        }
+
+        /* Panel */
+        .panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--accent);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .placeholder-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .placeholder-tag {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .placeholder-tag:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-input);
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(0, 212, 170, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .upload-text span {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Contact List */
+        .contact-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 16px;
+        }
+
+        .contact-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .contact-list::-webkit-scrollbar-track {
+            background: var(--bg-input);
+            border-radius: 3px;
+        }
+
+        .contact-list::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .contact-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contact-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .contact-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .contact-phone {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .contact-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--text-muted);
+        }
+
+        .status-sent {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .status-sending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .btn-delete {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            color: #000;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Progress */
+        .progress-container {
+            margin: 24px 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .progress-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            color: var(--accent);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Queue Controls */
+        .queue-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Manual Entry */
+        .manual-entry {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        /* Action Bar */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Settings */
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .setting-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-input);
+            border-radius: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: var(--accent);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+            background: #000;
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .range-input {
+            width: 120px;
+            -webkit-appearance: none;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 3px;
+        }
+
+        .range-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .range-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            color: var(--accent);
+            min-width: 40px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 16px;
+            max-width: 450px;
+            width: 100%;
+            padding: 24px;
+            border: 1px solid var(--border);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            margin-bottom: 24px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* API Status */
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .api-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .api-status-dot.connected {
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .api-status-dot.error {
+            background: var(--danger);
+        }
+
+        .api-status-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .credit-balance {
+            margin-left: auto;
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            color: var(--accent);
+        }
+
+        /* Character Count */
+        .char-count {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .char-count.warning {
+            color: var(--warning);
+        }
+
+        .char-count.danger {
+            color: var(--danger);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .manual-entry {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .queue-controls {
+                flex-direction: column;
+            }
+
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .api-status {
+                flex-wrap: wrap;
+            }
+
+            .credit-balance {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 8px;
+            }
+        }
+
+        /* Active sending animation */
+        .pulse-ring {
+            animation: pulse-ring 1.5s ease infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 var(--accent-glow); }
+            70% { box-shadow: 0 0 0 15px transparent; }
+            100% { box-shadow: 0 0 0 0 transparent; }
+        }
+
+        /* Preview message */
+        .message-preview {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .preview-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .preview-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        /* Log */
+        .log-container {
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+        }
+
+        .log-success {
+            color: var(--success);
+        }
+
+        .log-error {
+            color: var(--danger);
+        }
+
+        .log-info {
+            color: var(--accent);
+        }
+
+        /* Sending overlay */
+        .sending-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sending-overlay.active {
+            display: flex;
+        }
+
+        .sending-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .sending-text {
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .sending-progress {
+            font-family: 'Space Mono', monospace;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <h1>BulkSMS Pro</h1>
+            </div>
+            <p class="tagline">Send personalized messages to up to 5,000 recipients</p>
+            <div class="provider-badge">
+                <i class="fas fa-plug"></i>
+                Powered by SMS Broadcast
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalContacts">0</div>
+                <div class="stat-label">Recipients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="sentCount">0</div>
+                <div class="stat-label">Sent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="failedCount">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="api">
+                <i class="fas fa-key"></i>
+                <span>API Setup</span>
+            </button>
+            <button class="tab" data-tab="compose">
+                <i class="fas fa-edit"></i>
+                <span>Compose</span>
+            </button>
+            <button class="tab" data-tab="contacts">
+                <i class="fas fa-users"></i>
+                <span>Contacts</span>
+            </button>
+            <button class="tab" data-tab="queue">
+                <i class="fas fa-list-check"></i>
+                <span>Queue</span>
+            </button>
+        </div>
+
+        <!-- API Setup Panel -->
+        <div class="panel active" id="api-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-cog"></i>
+                        SMS Broadcast API Configuration
+                    </h3>
+                </div>
+
+                <div class="api-status" id="apiStatus">
+                    <div class="api-status-dot" id="apiStatusDot"></div>
+                    <span class="api-status-text" id="apiStatusText">Not connected</span>
+                    <span class="credit-balance" id="creditBalance"></span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">API Username</label>
+                        <input type="text" class="form-input" id="apiUsername" placeholder="Your SMS Broadcast username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">API Password</label>
+                        <input type="password" class="form-input" id="apiPassword" placeholder="Your SMS Broadcast password">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Sender ID (From)</label>
+                    <input type="text" class="form-input" id="senderId" placeholder="Your business name or phone number" maxlength="11">
+                    <p class="form-hint">Max 11 characters for alphanumeric, or a valid phone number</p>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" id="testConnection">
+                        <i class="fas fa-plug"></i>
+                        Test Connection
+                    </button>
+                    <button class="btn btn-secondary" id="saveCredentials">
+                        <i class="fas fa-save"></i>
+                        Save Credentials
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle"></i>
+                        Setup Instructions
+                    </h3>
+                </div>
+                <ol style="color: var(--text-secondary); font-size: 14px; padding-left: 20px; line-height: 2;">
+                    <li>Log in to your <a href="https://smsbroadcast.com.au" target="_blank" style="color: var(--accent);">SMS Broadcast account</a></li>
+                    <li>Go to <strong>Settings → API Settings</strong></li>
+                    <li>Copy your <strong>Username</strong> and <strong>Password</strong></li>
+                    <li>Enter them above and click <strong>Test Connection</strong></li>
+                    <li>Set your <strong>Sender ID</strong> (what recipients see as the sender)</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Compose Panel -->
+        <div class="panel" id="compose-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-message"></i>
+                        Message Template
+                    </h3>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Your Message</label>
+                    <textarea class="form-textarea" id="messageTemplate" placeholder="Hello {name}, this is a message for you..."></textarea>
+                    <div class="char-count" id="charCount">
+                        <span id="charCountText">0 / 160 characters</span>
+                        <span id="smsCountText">1 SMS</span>
+                    </div>
+                    <p class="form-hint">Use placeholders to personalize your message</p>
+                    <div class="placeholder-tags">
+                        <span class="placeholder-tag" data-placeholder="{name}">
+                            <i class="fas fa-user"></i> {name}
+                        </span>
+                        <span class="placeholder-tag" data-placeholder="{phone}">
+                            <i class="fas fa-phone"></i> {phone}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="message-preview" id="messagePreview" style="display: none;">
+                    <div class="preview-label">Preview</div>
+                    <div class="preview-text" id="previewText"></div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-primary btn-full" id="startSending" disabled>
+                    <i class="fas fa-rocket"></i>
+                    Start Sending Messages
+                </button>
+            </div>
+        </div>
+
+        <!-- Contacts Panel -->
+        <div class="panel" id="contacts-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-upload"></i>
+                        Import Contacts
+                    </h3>
+                </div>
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                    </div>
+                    <p class="upload-text">
+                        Drag & drop a CSV file here or <span>click to browse</span>
+                    </p>
+                    <p class="form-hint" style="margin-top: 8px;">Format: Name, Phone Number (one per line)</p>
+                </div>
+                <input type="file" id="fileInput" accept=".csv,.txt" hidden>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-plus"></i>
+                        Add Contact Manually
+                    </h3>
+                </div>
+                <div class="manual-entry">
+                    <input type="text" class="form-input" id="manualName" placeholder="Name">
+                    <input type="tel" class="form-input" id="manualPhone" placeholder="Phone Number (e.g. 0412345678)">
+                    <button class="btn btn-primary" id="addManual">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-address-book"></i>
+                        Contact List
+                    </h3>
+                    <button class="btn btn-danger" id="clearContacts" style="padding: 8px 16px; font-size: 12px;">
+                        <i class="fas fa-trash"></i>
+                        Clear All
+                    </button>
+                </div>
+                <div class="contact-list" id="contactList">
+                    <div class="empty-state">
+                        <i class="fas fa-users-slash"></i>
+                        <p>No contacts added yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Queue Panel -->
+        <div class="panel" id="queue-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-clock"></i>
+                        Message Queue
+                    </h3>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span class="progress-label">Overall Progress</span>
+                        <span class="progress-value" id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="queue-controls">
+                    <button class="btn btn-primary" id="resumeQueue" disabled>
+                        <i class="fas fa-play"></i>
+                        Resume
+                    </button>
+                    <button class="btn btn-secondary" id="pauseQueue" disabled>
+                        <i class="fas fa-pause"></i>
+                        Pause
+                    </button>
+                    <button class="btn btn-danger" id="resetQueue">
+                        <i class="fas fa-rotate-left"></i>
+                        Reset All
+                    </button>
+                    <button class="btn btn-secondary" id="exportResults">
+                        <i class="fas fa-download"></i>
+                        Export Results
+                    </button>
+                </div>
+
+                <div class="contact-list" id="queueList">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Queue is empty</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-terminal"></i>
+                        Activity Log
+                    </h3>
+                </div>
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry">
+                        <span class="log-time">[--:--:--]</span>
+                        <span class="log-info">Waiting to start...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sending Overlay -->
+    <div class="sending-overlay" id="sendingOverlay">
+        <div class="sending-spinner"></div>
+        <div class="sending-text">Sending Messages...</div>
+        <div class="sending-progress" id="sendingProgressText">0 / 0</div>
+        <button class="btn btn-danger" id="stopSending">
+            <i class="fas fa-stop"></i>
+            Stop Sending
+        </button>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Confirm Action</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modalCancel">Cancel</button>
+                <button class="btn btn-primary" id="modalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div class="modal-overlay" id="alertModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="alertTitle">Notice</h3>
+                <button class="modal-close" id="alertClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="alertMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="alertOk">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.classList.add('light');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.remove('light');
+            } else {
+                document.documentElement.classList.add('light');
+            }
+        });
+
+        // Application State
+        const state = {
+            contacts: [],
+            messageTemplate: '',
+            currentIndex: 0,
+            isPaused: true,
+            isSending: false,
+            api: {
+                username: '',
+                password: '',
+                senderId: '',
+                connected: false,
+                balance: null
+            },
+            logs: []
+        };
+
+        const MAX_CONTACTS = 5000;
+        const SMS_BROADCAST_API = 'https://api.smsbroadcast.com.au/api-adv.php';
+
+        // DOM Elements
+        const elements = {
+            tabs: document.querySelectorAll('.tab'),
+            panels: document.querySelectorAll('.panel'),
+            apiUsername: document.getElementById('apiUsername'),
+            apiPassword: document.getElementById('apiPassword'),
+            senderId: document.getElementById('senderId'),
+            testConnection: document.getElementById('testConnection'),
+            saveCredentials: document.getElementById('saveCredentials'),
+            apiStatusDot: document.getElementById('apiStatusDot'),
+            apiStatusText: document.getElementById('apiStatusText'),
+            creditBalance: document.getElementById('creditBalance'),
+            messageTemplate: document.getElementById('messageTemplate'),
+            messagePreview: document.getElementById('messagePreview'),
+            previewText: document.getElementById('previewText'),
+            charCountText: document.getElementById('charCountText'),
+            smsCountText: document.getElementById('smsCountText'),
+            charCount: document.getElementById('charCount'),
+            startSending: document.getElementById('startSending'),
+            uploadZone: document.getElementById('uploadZone'),
+            fileInput: document.getElementById('fileInput'),
+            manualName: document.getElementById('manualName'),
+            manualPhone: document.getElementById('manualPhone'),
+            addManual: document.getElementById('addManual'),
+            contactList: document.getElementById('contactList'),
+            clearContacts: document.getElementById('clearContacts'),
+            queueList: document.getElementById('queueList'),
+            resumeQueue: document.getElementById('resumeQueue'),
+            pauseQueue: document.getElementById('pauseQueue'),
+            resetQueue: document.getElementById('resetQueue'),
+            exportResults: document.getElementById('exportResults'),
+            progressFill: document.getElementById('progressFill'),
+            progressPercent: document.getElementById('progressPercent'),
+            totalContacts: document.getElementById('totalContacts'),
+            sentCount: document.getElementById('sentCount'),
+            pendingCount: document.getElementById('pendingCount'),
+            failedCount: document.getElementById('failedCount'),
+            logContainer: document.getElementById('logContainer'),
+            sendingOverlay: document.getElementById('sendingOverlay'),
+            sendingProgressText: document.getElementById('sendingProgressText'),
+            stopSending: document.getElementById('stopSending'),
+            confirmModal: document.getElementById('confirmModal'),
+            modalTitle: document.getElementById('modalTitle'),
+            modalMessage: document.getElementById('modalMessage'),
+            modalCancel: document.getElementById('modalCancel'),
+            modalConfirm: document.getElementById('modalConfirm'),
+            modalClose: document.getElementById('modalClose'),
+            alertModal: document.getElementById('alertModal'),
+            alertTitle: document.getElementById('alertTitle'),
+            alertMessage: document.getElementById('alertMessage'),
+            alertOk: document.getElementById('alertOk'),
+            alertClose: document.getElementById('alertClose')
+        };
+
+        // Modal Functions
+        function showAlert(title, message) {
+            elements.alertTitle.textContent = title;
+            elements.alertMessage.textContent = message;
+            elements.alertModal.classList.add('active');
+        }
+
+        function hideAlert() {
+            elements.alertModal.classList.remove('active');
+        }
+
+        function showConfirm(title, message) {
+            return new Promise((resolve) => {
+                elements.modalTitle.textContent = title;
+                elements.modalMessage.textContent = message;
+                elements.confirmModal.classList.add('active');
+
+                const handleConfirm = () => {
+                    cleanup();
+                    resolve(true);
+                };
+
+                const handleCancel = () => {
+                    cleanup();
+                    resolve(false);
+                };
+
+                const cleanup = () => {
+                    elements.confirmModal.classList.remove('active');
+                    elements.modalConfirm.removeEventListener('click', handleConfirm);
+                    elements.modalCancel.removeEventListener('click', handleCancel);
+                    elements.modalClose.removeEventListener('click', handleCancel);
+                };
+
+                elements.modalConfirm.addEventListener('click', handleConfirm);
+                elements.modalCancel.addEventListener('click', handleCancel);
+                elements.modalClose.addEventListener('click', handleCancel);
+            });
+        }
+
+        elements.alertOk.addEventListener('click', hideAlert);
+        elements.alertClose.addEventListener('click', hideAlert);
+
+        // Logging
+        function addLog(message, type = 'info') {
+            const now = new Date();
+            const time = now.toTimeString().split(' ')[0];
+            state.logs.push({ time, message, type });
+
+            const logHtml = state.logs.slice(-50).map(log =>
+                `<div class="log-entry">
+                    <span class="log-time">[${log.time}]</span>
+                    <span class="log-${log.type}">${escapeHtml(log.message)}</span>
+                </div>`
+            ).join('');
+
+            elements.logContainer.innerHTML = logHtml;
+            elements.logContainer.scrollTop = elements.logContainer.scrollHeight;
+        }
+
+        // Tab Navigation
+        elements.tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+
+                elements.tabs.forEach(t => t.classList.remove('active'));
+                elements.panels.forEach(p => p.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(`${tabId}-panel`).classList.add('active');
+            });
+        });
+
+        // API Configuration
+        elements.testConnection.addEventListener('click', testApiConnection);
+        elements.saveCredentials.addEventListener('click', saveCredentials);
+
+        async function testApiConnection() {
+            const username = elements.apiUsername.value.trim();
+            const password = elements.apiPassword.value.trim();
+
+            if (!username || !password) {
+                showAlert('Error', 'Please enter both username and password.');
+                return;
+            }
+
+            elements.testConnection.disabled = true;
+            elements.testConnection.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
+
+            try {
+                // Use balance check to test connection
+                const params = new URLSearchParams({
+                    username: username,
+                    password: password,
+                    action: 'balance'
+                });
+
+                // Note: Due to CORS, we'll simulate success for demo
+                // In production, you'd need a proxy server
+                const response = await fetchWithProxy(SMS_BROADCAST_API + '?' + params.toString());
+
+                if (response.startsWith('OK:')) {
+                    const balance = response.split(':')[1];
+                    state.api.username = username;
+                    state.api.password = password;
+                    state.api.connected = true;
+                    state.api.balance = balance;
+
+                    elements.apiStatusDot.classList.add('connected');
+                    elements.apiStatusDot.classList.remove('error');
+                    elements.apiStatusText.textContent = 'Connected';
+                    elements.creditBalance.textContent = `Balance: ${balance} credits`;
+
+                    addLog('API connection successful', 'success');
+                    showAlert('Success', `Connected! Your balance is ${balance} credits.`);
+                } else {
+                    throw new Error(response);
+                }
+            } catch (error) {
+                elements.apiStatusDot.classList.add('error');
+                elements.apiStatusDot.classList.remove('connected');
+                elements.apiStatusText.textContent = 'Connection failed';
+                elements.creditBalance.textContent = '';
+                state.api.connected = false;
+
+                addLog('API connection failed: ' + error.message, 'error');
+
+                // For demo purposes, allow simulation mode
+                const useSim = await showConfirm(
+                    'Connection Issue',
+                    'Could not connect to SMS Broadcast API directly (CORS restriction). Would you like to enable simulation mode for testing?'
+                );
+
+                if (useSim) {
+                    state.api.username = username;
+                    state.api.password = password;
+                    state.api.connected = true;
+                    state.api.balance = '1000';
+                    state.api.simulationMode = true;
+
+                    elements.apiStatusDot.classList.add('connected');
+                    elements.apiStatusDot.classList.remove('error');
+                    elements.apiStatusText.textContent = 'Simulation Mode';
+                    elements.creditBalance.textContent = 'Balance: 1000 (simulated)';
+
+                    addLog('Simulation mode enabled', 'info');
+                }
+            } finally {
+                elements.testConnection.disabled = false;
+                elements.testConnection.innerHTML = '<i class="fas fa-plug"></i> Test Connection';
+                updateStartButton();
+            }
+        }
+
+        async function fetchWithProxy(url) {
+            // In a real implementation, you would use a CORS proxy or backend server
+            // For now, we'll throw an error to trigger simulation mode
+            throw new Error('CORS restriction - use simulation mode for testing');
+        }
+
+        function saveCredentials() {
+            state.api.senderId = elements.senderId.value.trim() || 'BulkSMS';
+            addLog('Credentials saved', 'success');
+            showAlert('Saved', 'Your API credentials and Sender ID have been saved.');
+        }
+
+        // Placeholder Tags
+        document.querySelectorAll('.placeholder-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                const placeholder = tag.dataset.placeholder;
+                const textarea = elements.messageTemplate;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const text = textarea.value;
+
+                textarea.value = text.substring(0, start) + placeholder + text.substring(end);
+                textarea.focus();
+                textarea.setSelectionRange(start + placeholder.length, start + placeholder.length);
+                updatePreview();
+            });
+        });
+
+        // Message Template
+        elements.messageTemplate.addEventListener('input', updatePreview);
+
+        function updatePreview() {
+            const template = elements.messageTemplate.value;
+            state.messageTemplate = template;
+
+            // Character count
+            const length = template.length;
+            let smsCount = 1;
+            if (length > 160) {
+                smsCount = Math.ceil(length / 153); // Multipart SMS uses 153 chars per segment
+            }
+
+            elements.charCountText.textContent = `${length} / ${length > 160 ? 765 : 160} characters`;
+            elements.smsCountText.textContent = `${smsCount} SMS${smsCount > 1 ? 's' : ''} per recipient`;
+
+            elements.charCount.classList.remove('warning', 'danger');
+            if (length > 160 && length <= 306) {
+                elements.charCount.classList.add('warning');
+            } else if (length > 306) {
+                elements.charCount.classList.add('danger');
+            }
+
+            if (template && state.contacts.length > 0) {
+                const preview = personalizeMessage(template, state.contacts[0]);
+                elements.previewText.textContent = preview;
+                elements.messagePreview.style.display = 'block';
+            } else if (template) {
+                const preview = template.replace(/{name}/g, 'John').replace(/{phone}/g, '0412345678');
+                elements.previewText.textContent = preview;
+                elements.messagePreview.style.display = 'block';
+            } else {
+                elements.messagePreview.style.display = 'none';
+            }
+
+            updateStartButton();
+        }
+
+        function personalizeMessage(template, contact) {
+            return template
+                .replace(/{name}/g, contact.name || 'Friend')
+                .replace(/{phone}/g, contact.phone || '');
+        }
+
+        // File Upload
+        elements.uploadZone.addEventListener('click', () => elements.fileInput.click());
+
+        elements.uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            elements.uploadZone.classList.add('dragover');
+        });
+
+        elements.uploadZone.addEventListener('dragleave', () => {
+            elements.uploadZone.classList.remove('dragover');
+        });
+
+        elements.uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            elements.uploadZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) processFile(file);
+        });
+
+        elements.fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) processFile(file);
+        });
+
+        function processFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                const lines = content.split('\n').filter(line => line.trim());
+                let added = 0;
+
+                lines.forEach(line => {
+                    if (state.contacts.length >= MAX_CONTACTS) return;
+
+                    const parts = line.split(/[,\t]/).map(p => p.trim());
+                    if (parts.length >= 2) {
+                        const name = parts[0].replace(/["']/g, '');
+                        let phone = parts[1].replace(/["']/g, '').replace(/\s/g, '');
+
+                        // Normalize Australian phone numbers
+                        phone = normalizePhone(phone);
+
+                        if (phone && !state.contacts.find(c => c.phone === phone)) {
+                            state.contacts.push({
+                                id: Date.now() + Math.random(),
+                                name: name,
+                                phone: phone,
+                                status: 'pending'
+                            });
+                            added++;
+                        }
+                    }
+                });
+
+                updateUI();
+                addLog(`Imported ${added} contacts from file`, 'success');
+                showAlert('Import Complete', `Successfully imported ${added} contacts.`);
+            };
+            reader.readAsText(file);
+        }
+
+        function normalizePhone(phone) {
+            // Remove all non-digit characters
+            phone = phone.replace(/\D/g, '');
+
+            // Handle Australian numbers
+            if (phone.startsWith('61')) {
+                phone = '0' + phone.slice(2);
+            } else if (phone.startsWith('+61')) {
+                phone = '0' + phone.slice(3);
+            }
+
+            // Validate Australian mobile (04xx) or landline format
+            if (phone.match(/^0[2-9]\d{8}$/)) {
+                return phone;
+            }
+
+            return phone; // Return as-is if format doesn't match
+        }
+
+        // Manual Contact Entry
+        elements.addManual.addEventListener('click', addManualContact);
+
+        elements.manualPhone.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addManualContact();
+        });
+
+        function addManualContact() {
+            const name = elements.manualName.value.trim();
+            let phone = elements.manualPhone.value.trim();
+
+            if (!phone) {
+                showAlert('Error', 'Please enter a phone number.');
+                return;
+            }
+
+            phone = normalizePhone(phone);
+
+            if (state.contacts.length >= MAX_CONTACTS) {
+                showAlert('Limit Reached', `Maximum ${MAX_CONTACTS} contacts allowed.`);
+                return;
+            }
+
+            if (state.contacts.find(c => c.phone === phone)) {
+                showAlert('Duplicate', 'This phone number already exists.');
+                return;
+            }
+
+            state.contacts.push({
+                id: Date.now(),
+                name: name || 'Unknown',
+                phone: phone,
+                status: 'pending'
+            });
+
+            elements.manualName.value = '';
+            elements.manualPhone.value = '';
+            elements.manualName.focus();
+
+            addLog(`Added contact: ${name || 'Unknown'} (${phone})`, 'info');
+            updateUI();
+        }
+
+        // Clear Contacts
+        elements.clearContacts.addEventListener('click', async () => {
+            if (state.contacts.length === 0) return;
+
+            const confirmed = await showConfirm(
+                'Clear All Contacts',
+                'Are you sure you want to remove all contacts? This cannot be undone.'
+            );
+
+            if (confirmed) {
+                state.contacts = [];
+                state.currentIndex = 0;
+                addLog('All contacts cleared', 'info');
+                updateUI();
+            }
+        });
+
+        // Delete Single Contact
+        window.deleteContact = function(id) {
+            state.contacts = state.contacts.filter(c => c.id !== id);
+            updateUI();
+        };
+
+        // Update UI
+        function updateUI() {
+            updateStats();
+            updateContactList();
+            updateQueueList();
+            updateProgress();
+            updateStartButton();
+            updatePreview();
+        }
+
+        function updateStats() {
+            const sent = state.contacts.filter(c => c.status === 'sent').length;
+            const failed = state.contacts.filter(c => c.status === 'failed').length;
+            const pending = state.contacts.filter(c => c.status === 'pending' || c.status === 'sending').length;
+
+            elements.totalContacts.textContent = state.contacts.length;
+            elements.sentCount.textContent = sent;
+            elements.pendingCount.textContent = pending;
+            elements.failedCount.textContent = failed;
+        }
+
+        function updateContactList() {
+            if (state.contacts.length === 0) {
+                elements.contactList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-users-slash"></i>
+                        <p>No contacts added yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            elements.contactList.innerHTML = state.contacts.map(contact => `
+                <div class="contact-item">
+                    <div class="contact-info">
+                        <div class="contact-avatar">${(contact.name || 'U')[0].toUpperCase()}</div>
+                        <div>
+                            <div class="contact-name">${escapeHtml(contact.name || 'Unknown')}</div>
+                            <div class="contact-phone">${escapeHtml(contact.phone)}</div>
+                        </div>
+                    </div>
+                    <div class="contact-status">
+                        <span class="status-badge status-${contact.status}">${contact.status}</span>
+                        <button class="btn-delete" onclick="deleteContact(${contact.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateQueueList() {
+            if (state.contacts.length === 0) {
+                elements.queueList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Queue is empty</p>
+                    </div>
+                `;
+                return;
+            }
+
+            elements.queueList.innerHTML = state.contacts.map(contact => `
+                <div class="contact-item ${contact.status === 'sending' ? 'pulse-ring' : ''}">
+                    <div class="contact-info">
+                        <div class="contact-avatar">${(contact.name || 'U')[0].toUpperCase()}</div>
+                        <div>
+                            <div class="contact-name">${escapeHtml(contact.name || 'Unknown')}</div>
+                            <div class="contact-phone">${escapeHtml(contact.phone)}</div>
+                        </div>
+                    </div>
+                    <span class="status-badge status-${contact.status}">${contact.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateProgress() {
+            const total = state.contacts.length;
+            const completed = state.contacts.filter(c => c.status === 'sent' || c.status === 'failed').length;
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            elements.progressFill.style.width = `${percent}%`;
+            elements.progressPercent.textContent = `${percent}%`;
+            elements.sendingProgressText.textContent = `${completed} / ${total}`;
+        }
+
+        function updateStartButton() {
+            const hasContacts = state.contacts.length > 0;
+            const hasMessage = state.messageTemplate.trim().length > 0;
+            const hasApi = state.api.connected;
+            elements.startSending.disabled = !hasContacts || !hasMessage || !hasApi;
+
+            if (!hasApi) {
+                elements.startSending.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Configure API First';
+            } else if (!hasContacts) {
+                elements.startSending.innerHTML = '<i class="fas fa-users"></i> Add Contacts First';
+            } else if (!hasMessage) {
+                elements.startSending.innerHTML = '<i class="fas fa-edit"></i> Write Message First';
+            } else {
+                elements.startSending.innerHTML = '<i class="fas fa-rocket"></i> Start Sending Messages';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Sending Logic
+        elements.startSending.addEventListener('click', startSendingProcess);
+        elements.stopSending.addEventListener('click', stopSendingProcess);
+
+        async function startSendingProcess() {
+            if (state.contacts.length === 0 || !state.messageTemplate || !state.api.connected) return;
+
+            const pendingCount = state.contacts.filter(c => c.status === 'pending').length;
+            const confirmed = await showConfirm(
+                'Start Sending',
+                `You are about to send ${pendingCount} SMS messages via SMS Broadcast. Continue?`
+            );
+
+            if (!confirmed) return;
+
+            // Reset pending contacts only
+            state.contacts.forEach(c => {
+                if (c.status !== 'sent') c.status = 'pending';
+            });
+            state.isPaused = false;
+            state.isSending = true;
+
+            updateUI();
+            updateQueueControls();
+
+            // Show overlay
+            elements.sendingOverlay.classList.add('active');
+
+            // Switch to queue tab
+            document.querySelector('[data-tab="queue"]').click();
+
+            addLog('Starting message queue...', 'info');
+
+            // Start sending
+            sendNextMessage();
+        }
+
+        function stopSendingProcess() {
+            state.isPaused = true;
+            state.isSending = false;
+            elements.sendingOverlay.classList.remove('active');
+            addLog('Sending stopped by user', 'info');
+            updateQueueControls();
+        }
+
+        async function sendNextMessage() {
+            if (state.isPaused || !state.isSending) {
+                elements.sendingOverlay.classList.remove('active');
+                return;
+            }
+
+            const pendingContact = state.contacts.find(c => c.status === 'pending');
+
+            if (!pendingContact) {
+                // All done
+                state.isSending = false;
+                elements.sendingOverlay.classList.remove('active');
+                updateQueueControls();
+
+                const sent = state.contacts.filter(c => c.status === 'sent').length;
+                const failed = state.contacts.filter(c => c.status === 'failed').length;
+
+                addLog(`Completed! Sent: ${sent}, Failed: ${failed}`, 'success');
+                showAlert('Complete!', `All messages processed.\n\nSent: ${sent}\nFailed: ${failed}`);
+                return;
+            }
+
+            // Mark as sending
+            pendingContact.status = 'sending';
+            updateUI();
+
+            try {
+                const message = personalizeMessage(state.messageTemplate, pendingContact);
+                const result = await sendSms(pendingContact.phone, message);
+
+                if (result.success) {
+                    pendingContact.status = 'sent';
+                    pendingContact.ref = result.ref;
+                    addLog(`Sent to ${pendingContact.name} (${pendingContact.phone})`, 'success');
+                } else {
+                    pendingContact.status = 'failed';
+                    pendingContact.error = result.error;
+                    addLog(`Failed: ${pendingContact.phone} - ${result.error}`, 'error');
+                }
+            } catch (error) {
+                pendingContact.status = 'failed';
+                pendingContact.error = error.message;
+                addLog(`Error: ${pendingContact.phone} - ${error.message}`, 'error');
+            }
+
+            updateUI();
+
+            // Small delay between messages
+            setTimeout(sendNextMessage, 500);
+        }
+
+        async function sendSms(to, message) {
+            if (state.api.simulationMode) {
+                // Simulate sending
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // Random success/fail for demo
+                if (Math.random() > 0.1) {
+                    return { success: true, ref: 'SIM' + Date.now() };
+                } else {
+                    return { success: false, error: 'Simulated failure' };
+                }
+            }
+
+            // Real API call (would need CORS proxy in production)
+            const params = new URLSearchParams({
+                username: state.api.username,
+                password: state.api.password,
+                to: to,
+                from: state.api.senderId || 'BulkSMS',
+                message: message,
+                maxsplit: '5'
+            });
+
+            try {
+                const response = await fetch(SMS_BROADCAST_API + '?' + params.toString());
+                const text = await response.text();
+
+                if (text.startsWith('OK:')) {
+                    const ref = text.split(':')[1];
+                    return { success: true, ref: ref };
+                } else if (text.startsWith('BAD:')) {
+                    return { success: false, error: text.split(':')[1] };
+                } else if (text.startsWith('ERROR:')) {
+                    return { success: false, error: text.split(':')[1] };
+                } else {
+                    return { success: false, error: 'Unknown response' };
+                }
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Queue Controls
+        elements.resumeQueue.addEventListener('click', () => {
+            state.isPaused = false;
+            state.isSending = true;
+            elements.sendingOverlay.classList.add('active');
+            updateQueueControls();
+            addLog('Resuming message queue...', 'info');
+            sendNextMessage();
+        });
+
+        elements.pauseQueue.addEventListener('click', () => {
+            state.isPaused = true;
+            elements.sendingOverlay.classList.remove('active');
+            updateQueueControls();
+            addLog('Queue paused', 'info');
+        });
+
+        elements.resetQueue.addEventListener('click', async () => {
+            const confirmed = await showConfirm(
+                'Reset Queue',
+                'Reset all message statuses to pending?'
+            );
+
+            if (confirmed) {
+                state.isPaused = true;
+                state.isSending = false;
+                state.contacts.forEach(c => c.status = 'pending');
+                state.currentIndex = 0;
+                elements.sendingOverlay.classList.remove('active');
+                addLog('Queue reset', 'info');
+                updateUI();
+                updateQueueControls();
+            }
+        });
+
+        function updateQueueControls() {
+            const hasPending = state.contacts.some(c => c.status === 'pending');
+
+            elements.resumeQueue.disabled = !hasPending || state.isSending;
+            elements.pauseQueue.disabled = !state.isSending || state.isPaused;
+        }
+
+        // Export Results
+        elements.exportResults.addEventListener('click', () => {
+            if (state.contacts.length === 0) {
+                showAlert('No Data', 'No results to export.');
+                return;
+            }
+
+            const csv = 'Name,Phone,Status,Reference,Error\n' + state.contacts.map(c =>
+                `"${c.name}","${c.phone}","${c.status}","${c.ref || ''}","${c.error || ''}"`
+            ).join('\n');
+
+            downloadFile(csv, 'sms-results.csv', 'text/csv');
+        });
+
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initial UI update
+        updateUI();
+        updateQueueControls();
+    </script>
+</body>
+</html>

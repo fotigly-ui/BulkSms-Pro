@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BulkSMS Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2332;
+            --bg-input: #0d1421;
+            --text-primary: #f0f4f8;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #00d4aa;
+            --accent-glow: rgba(0, 212, 170, 0.3);
+            --accent-secondary: #06b6d4;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        .light {
+            --bg-primary: #f1f5f9;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-input: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 16px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0 24px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #000;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        .logo h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            background: var(--bg-secondary);
+            padding: 5px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .tab i { font-size: 14px; }
+        .tab:hover { color: var(--text-primary); background: var(--bg-card); }
+        .tab.active { background: var(--accent); color: #000; font-weight: 600; }
+
+        .panel { display: none; animation: fadeIn 0.3s ease; }
+        .panel.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 10px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title i { color: var(--accent); }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group:last-child { margin-bottom: 0; }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-textarea { min-height: 100px; resize: vertical; }
+
+        .form-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .placeholder-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .placeholder-tag {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .placeholder-tag:hover { background: var(--accent); color: #000; }
+
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 30px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-input);
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(0, 212, 170, 0.05);
+        }
+
+        .upload-icon { font-size: 32px; color: var(--accent); margin-bottom: 10px; }
+        .upload-text { color: var(--text-secondary); font-size: 13px; }
+        .upload-text span { color: var(--accent); font-weight: 600; }
+
+        .contact-list { max-height: 280px; overflow-y: auto; }
+        .contact-list::-webkit-scrollbar { width: 4px; }
+        .contact-list::-webkit-scrollbar-track { background: var(--bg-input); border-radius: 2px; }
+        .contact-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .contact-info { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+
+        .contact-avatar {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .contact-details { min-width: 0; flex: 1; }
+        .contact-name { font-weight: 500; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .contact-phone { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-muted); }
+        .contact-status { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: rgba(100, 116, 139, 0.2); color: var(--text-muted); }
+        .status-sent { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-failed { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .status-sending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+
+        .btn-delete {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            color: #000;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--accent-glow); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-secondary { background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: #fff; }
+        .btn-sm { padding: 8px 14px; font-size: 12px; width: auto; }
+
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .btn-group .btn { width: 100%; }
+
+        .progress-container { margin-bottom: 20px; }
+        .progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .progress-label { font-size: 12px; color: var(--text-secondary); }
+        .progress-value { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--accent); }
+
+        .progress-bar { height: 8px; background: var(--bg-input); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-secondary)); border-radius: 4px; transition: width 0.5s ease; }
+
+        .manual-entry { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+
+        .empty-state { text-align: center; padding: 30px 16px; color: var(--text-muted); }
+        .empty-state i { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+        .empty-state p { font-size: 13px; }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .setting-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .setting-row:first-child { padding-top: 0; }
+        .setting-info { flex: 1; }
+        .setting-info h4 { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+        .setting-info p { font-size: 11px; color: var(--text-muted); }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 16px;
+            max-width: 360px;
+            width: 100%;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-close { background: transparent; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 4px; }
+        .modal-body { margin-bottom: 20px; font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+        .modal-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .char-count { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+        .char-count.warning { color: var(--warning); }
+        .char-count.danger { color: var(--danger); }
+
+        .message-preview {
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 14px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .preview-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .preview-text { font-size: 13px; line-height: 1.5; color: var(--text-primary); }
+
+        .log-container {
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 12px;
+            max-height: 160px;
+            overflow-y: auto;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+        }
+
+        .log-entry { padding: 3px 0; border-bottom: 1px solid var(--border); }
+        .log-entry:last-child { border-bottom: none; }
+        .log-time { color: var(--text-muted); }
+        .log-success { color: var(--success); }
+        .log-error { color: var(--danger); }
+        .log-info { color: var(--accent); }
+
+        .pulse-ring { animation: pulse-ring 1.5s ease infinite; }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 var(--accent-glow); }
+            70% { box-shadow: 0 0 0 10px transparent; }
+            100% { box-shadow: 0 0 0 0 transparent; }
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .api-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .api-dot.connected { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .api-dot.error { background: var(--danger); }
+
+        .api-text { font-size: 12px; color: var(--text-secondary); flex: 1; }
+        .api-balance { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-paper-plane"></i></div>
+            <h1>BulkSMS Pro</h1>
+        </div>
+        <p class="tagline">Send personalized messages to up to 5,000 recipients</p>
+    </header>
+
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-value" id="totalContacts">0</div>
+            <div class="stat-label">Recipients</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="sentCount">0</div>
+            <div class="stat-label">Sent</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="pendingCount">0</div>
+            <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="failedCount">0</div>
+            <div class="stat-label">Failed</div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="setup"><i class="fas fa-cog"></i> Setup</button>
+        <button class="tab" data-tab="compose"><i class="fas fa-edit"></i> Compose</button>
+        <button class="tab" data-tab="contacts"><i class="fas fa-users"></i> Contacts</button>
+        <button class="tab" data-tab="queue"><i class="fas fa-list"></i> Queue</button>
+    </div>
+
+    <!-- Setup Panel -->
+    <div class="panel active" id="setup-panel">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-server"></i> API Configuration</h3>
+            </div>
+
+            <div class="api-status">
+                <div class="api-dot" id="apiDot"></div>
+                <span class="api-text" id="apiText">Not connected</span>
+                <span class="api-balance" id="apiBalance"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Backend API URL</label>
+                <input type="url" class="form-input" id="apiUrl" placeholder="https://your-app.vercel.app/api/sms">
+                <p class="form-hint">Your deployed Vercel backend URL</p>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">SMS Broadcast Username</label>
+                    <input type="text" class="form-input" id="apiUsername" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">SMS Broadcast Password</label>
+                    <input type="password" class="form-input" id="apiPassword" placeholder="Password">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Sender ID</label>
+                <input type="text" class="form-input" id="senderId" placeholder="Your business name" maxlength="11">
+                <p class="form-hint">Max 11 characters. What recipients see as sender.</p>
+            </div>
+
+            <button class="btn btn-primary" id="testConnection">
+                <i class="fas fa-plug"></i> Test Connection
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-info-circle"></i> Setup Guide</h3>
+            </div>
+            <ol style="color: var(--text-secondary); font-size: 13px; padding-left: 20px; line-height: 2;">
+                <li>Deploy the backend code to Vercel (free)</li>
+                <li>Enter your Vercel app URL above</li>
+                <li>Enter your SMS Broadcast credentials</li>
+                <li>Click "Test Connection" to verify</li>
+                <li>Start sending messages!</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Compose Panel -->
+    <div class="panel" id="compose-panel">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-message"></i> Message Template</h3>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Your Message</label>
+                <textarea class="form-textarea" id="messageTemplate" placeholder="Hello {name}, this is a message for you..."></textarea>
+                <div class="char-count" id="charCount">
+                    <span id="charCountText">0 / 160 chars</span>
+                    <span id="smsCountText">1 SMS</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <p class="form-hint">Use placeholders to personalize:</p>
+                <div class="placeholder-tags">
+                    <span class="placeholder-tag" data-placeholder="{name}"><i class="fas fa-user"></i> {name}</span>
+                    <span class="placeholder-tag" data-placeholder="{phone}"><i class="fas fa-phone"></i> {phone}</span>
+                </div>
+            </div>
+            <div class="message-preview" id="messagePreview" style="display: none;">
+                <div class="preview-label">Preview</div>
+                <div class="preview-text" id="previewText"></div>
+            </div>
+        </div>
+        <button class="btn btn-primary" id="startSending" disabled>
+            <i class="fas fa-rocket"></i> Start Sending Messages
+        </button>
+    </div>
+
+    <!-- Contacts Panel -->
+    <div class="panel" id="contacts-panel">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-upload"></i> Import Contacts</h3>
+            </div>
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                <p class="upload-text">Tap to upload CSV file</p>
+                <p class="form-hint">Format: Name, Phone (one per line)</p>
+            </div>
+            <input type="file" id="fileInput" accept=".csv,.txt" hidden>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-user-plus"></i> Add Manually</h3>
+            </div>
+            <div class="manual-entry">
+                <input type="text" class="form-input" id="manualName" placeholder="Name">
+                <input type="tel" class="form-input" id="manualPhone" placeholder="Phone">
+            </div>
+            <button class="btn btn-primary" id="addManual"><i class="fas fa-plus"></i> Add Contact</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-address-book"></i> Contact List</h3>
+                <button class="btn btn-danger btn-sm" id="clearContacts"><i class="fas fa-trash"></i> Clear</button>
+            </div>
+            <div class="contact-list" id="contactList">
+                <div class="empty-state">
+                    <i class="fas fa-users-slash"></i>
+                    <p>No contacts added yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Queue Panel -->
+    <div class="panel" id="queue-panel">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-clock"></i> Message Queue</h3>
+            </div>
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span class="progress-label">Progress</span>
+                    <span class="progress-value" id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="resumeQueue" disabled><i class="fas fa-play"></i> Resume</button>
+                <button class="btn btn-secondary" id="pauseQueue" disabled><i class="fas fa-pause"></i> Pause</button>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-danger" id="resetQueue"><i class="fas fa-rotate-left"></i> Reset</button>
+                <button class="btn btn-secondary" id="exportResults"><i class="fas fa-download"></i> Export</button>
+            </div>
+            <div class="contact-list" id="queueList">
+                <div class="empty-state"><i class="fas fa-inbox"></i><p>Queue is empty</p></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-terminal"></i> Activity Log</h3>
+            </div>
+            <div class="log-container" id="logContainer">
+                <div class="log-entry"><span class="log-time">[--:--:--]</span><span class="log-info"> Ready</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Confirm</h3>
+                <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modalMessage">Are you sure?</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modalCancel">Cancel</button>
+                <button class="btn btn-primary" id="modalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="alertModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="alertTitle">Notice</h3>
+                <button class="modal-close" id="alertClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="alertMessage"></div>
+            <div class="modal-footer" style="grid-template-columns: 1fr;">
+                <button class="btn btn-primary" id="alertOk">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme
+        if (window.matchMedia?.('(prefers-color-scheme: light)').matches) {
+            document.documentElement.classList.add('light');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            document.documentElement.classList.toggle('light', !e.matches);
+        });
+
+        // Cookie helpers for saving settings
+        function setCookie(name, value, days = 365) {
+            const expires = new Date(Date.now() + days * 864e5).toUTCString();
+            document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/; SameSite=Strict';
+        }
+
+        function getCookie(name) {
+            const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : '';
+        }
+
+        function saveSettings() {
+            const settings = {
+                url: state.api.url,
+                username: state.api.username,
+                password: state.api.password,
+                senderId: state.api.senderId
+            };
+            setCookie('bulksms_settings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            try {
+                const saved = getCookie('bulksms_settings');
+                if (saved) {
+                    const settings = JSON.parse(saved);
+                    state.api.url = settings.url || '';
+                    state.api.username = settings.username || '';
+                    state.api.password = settings.password || '';
+                    state.api.senderId = settings.senderId || '';
+                    return true;
+                }
+            } catch (e) {}
+            return false;
+        }
+
+        // State
+        const state = {
+            contacts: [],
+            messageTemplate: '',
+            isPaused: true,
+            isSending: false,
+            logs: [],
+            api: { url: '', username: '', password: '', senderId: '', connected: false, balance: null }
+        };
+
+        const MAX_CONTACTS = 5000;
+        const $ = id => document.getElementById(id);
+
+        // Elements
+        const el = {
+            tabs: document.querySelectorAll('.tab'),
+            panels: document.querySelectorAll('.panel'),
+            apiUrl: $('apiUrl'),
+            apiUsername: $('apiUsername'),
+            apiPassword: $('apiPassword'),
+            senderId: $('senderId'),
+            testConnection: $('testConnection'),
+            apiDot: $('apiDot'),
+            apiText: $('apiText'),
+            apiBalance: $('apiBalance'),
+            messageTemplate: $('messageTemplate'),
+            messagePreview: $('messagePreview'),
+            previewText: $('previewText'),
+            charCountText: $('charCountText'),
+            smsCountText: $('smsCountText'),
+            charCount: $('charCount'),
+            startSending: $('startSending'),
+            uploadZone: $('uploadZone'),
+            fileInput: $('fileInput'),
+            manualName: $('manualName'),
+            manualPhone: $('manualPhone'),
+            addManual: $('addManual'),
+            contactList: $('contactList'),
+            clearContacts: $('clearContacts'),
+            queueList: $('queueList'),
+            resumeQueue: $('resumeQueue'),
+            pauseQueue: $('pauseQueue'),
+            resetQueue: $('resetQueue'),
+            exportResults: $('exportResults'),
+            progressFill: $('progressFill'),
+            progressPercent: $('progressPercent'),
+            totalContacts: $('totalContacts'),
+            sentCount: $('sentCount'),
+            pendingCount: $('pendingCount'),
+            failedCount: $('failedCount'),
+            logContainer: $('logContainer'),
+            confirmModal: $('confirmModal'),
+            alertModal: $('alertModal')
+        };
+
+        // Modals
+        function showAlert(title, msg) {
+            $('alertTitle').textContent = title;
+            $('alertMessage').textContent = msg;
+            el.alertModal.classList.add('active');
+        }
+
+        $('alertOk').onclick = $('alertClose').onclick = () => el.alertModal.classList.remove('active');
+
+        function showConfirm(title, msg) {
+            return new Promise(resolve => {
+                $('modalTitle').textContent = title;
+                $('modalMessage').textContent = msg;
+                el.confirmModal.classList.add('active');
+                const close = val => { el.confirmModal.classList.remove('active'); resolve(val); };
+                $('modalConfirm').onclick = () => close(true);
+                $('modalCancel').onclick = $('modalClose').onclick = () => close(false);
+            });
+        }
+
+        // Logging
+        function log(msg, type = 'info') {
+            const time = new Date().toTimeString().split(' ')[0];
+            state.logs.push({ time, msg, type });
+            el.logContainer.innerHTML = state.logs.slice(-50).map(l =>
+                `<div class="log-entry"><span class="log-time">[${l.time}]</span><span class="log-${l.type}"> ${esc(l.msg)}</span></div>`
+            ).join('');
+            el.logContainer.scrollTop = el.logContainer.scrollHeight;
+        }
+
+        // Tabs
+        el.tabs.forEach(t => t.onclick = () => {
+            el.tabs.forEach(x => x.classList.remove('active'));
+            el.panels.forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            $(t.dataset.tab + '-panel').classList.add('active');
+        });
+
+        // API Connection
+        el.testConnection.onclick = async () => {
+            const url = el.apiUrl.value.trim();
+            const username = el.apiUsername.value.trim();
+            const password = el.apiPassword.value.trim();
+
+            if (!url || !username || !password) {
+                showAlert('Error', 'Please fill in all API fields.');
+                return;
+            }
+
+            el.testConnection.disabled = true;
+            el.testConnection.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
+
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'balance', username, password })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    state.api = { url, username, password, senderId: el.senderId.value.trim() || 'BulkSMS', connected: true, balance: data.balance };
+                    el.apiDot.className = 'api-dot connected';
+                    el.apiText.textContent = 'Connected';
+                    el.apiBalance.textContent = `${data.balance} credits`;
+                    log('API connected', 'success');
+                    saveSettings(); // Save settings to cookies
+                    showAlert('Success', `Connected! Balance: ${data.balance} credits\n\nSettings saved!`);
+                } else {
+                    throw new Error(data.error || 'Connection failed');
+                }
+            } catch (err) {
+                el.apiDot.className = 'api-dot error';
+                el.apiText.textContent = 'Connection failed';
+                el.apiBalance.textContent = '';
+                state.api.connected = false;
+                log('Connection failed: ' + err.message, 'error');
+                showAlert('Error', err.message);
+            } finally {
+                el.testConnection.disabled = false;
+                el.testConnection.innerHTML = '<i class="fas fa-plug"></i> Test Connection';
+                updateStartBtn();
+            }
+        };
+
+        // Placeholders
+        document.querySelectorAll('.placeholder-tag').forEach(t => t.onclick = () => {
+            const ph = t.dataset.placeholder;
+            const ta = el.messageTemplate;
+            const s = ta.selectionStart, e = ta.selectionEnd;
+            ta.value = ta.value.slice(0, s) + ph + ta.value.slice(e);
+            ta.focus();
+            ta.setSelectionRange(s + ph.length, s + ph.length);
+            updatePreview();
+        });
+
+        // Message
+        el.messageTemplate.oninput = updatePreview;
+
+        function updatePreview() {
+            const t = el.messageTemplate.value;
+            state.messageTemplate = t;
+            const len = t.length;
+            const sms = len <= 160 ? 1 : Math.ceil(len / 153);
+
+            el.charCountText.textContent = `${len} / ${len > 160 ? 765 : 160} chars`;
+            el.smsCountText.textContent = `${sms} SMS`;
+            el.charCount.className = 'char-count' + (len > 306 ? ' danger' : len > 160 ? ' warning' : '');
+
+            if (t) {
+                const name = state.contacts[0]?.name || 'John';
+                const phone = state.contacts[0]?.phone || '0412345678';
+                el.previewText.textContent = t.replace(/{name}/g, name).replace(/{phone}/g, phone);
+                el.messagePreview.style.display = 'block';
+            } else {
+                el.messagePreview.style.display = 'none';
+            }
+            updateStartBtn();
+        }
+
+        // File Upload
+        el.uploadZone.onclick = () => el.fileInput.click();
+        el.uploadZone.ondragover = e => { e.preventDefault(); el.uploadZone.classList.add('dragover'); };
+        el.uploadZone.ondragleave = () => el.uploadZone.classList.remove('dragover');
+        el.uploadZone.ondrop = e => { e.preventDefault(); el.uploadZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); };
+        el.fileInput.onchange = e => { if (e.target.files[0]) processFile(e.target.files[0]); };
+
+        function processFile(file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                let added = 0;
+                e.target.result.split('\n').filter(l => l.trim()).forEach(line => {
+                    if (state.contacts.length >= MAX_CONTACTS) return;
+                    const [name, phone] = line.split(/[,\t]/).map(p => p.trim().replace(/["']/g, ''));
+                    const norm = normalizePhone(phone);
+                    if (norm && !state.contacts.find(c => c.phone === norm)) {
+                        state.contacts.push({ id: Date.now() + Math.random(), name: name || 'Unknown', phone: norm, status: 'pending' });
+                        added++;
+                    }
+                });
+                updateUI();
+                log(`Imported ${added} contacts`, 'success');
+                showAlert('Done', `Added ${added} contacts`);
+            };
+            reader.readAsText(file);
+        }
+
+        function normalizePhone(p) {
+            p = (p || '').replace(/\D/g, '');
+            if (p.startsWith('61')) p = '0' + p.slice(2);
+            return p;
+        }
+
+        // Manual Entry
+        el.addManual.onclick = addContact;
+        el.manualPhone.onkeypress = e => { if (e.key === 'Enter') addContact(); };
+
+        function addContact() {
+            const name = el.manualName.value.trim();
+            let phone = el.manualPhone.value.trim();
+            if (!phone) return showAlert('Error', 'Enter phone number');
+            phone = normalizePhone(phone);
+            if (state.contacts.length >= MAX_CONTACTS) return showAlert('Limit', `Max ${MAX_CONTACTS} contacts`);
+            if (state.contacts.find(c => c.phone === phone)) return showAlert('Duplicate', 'Number exists');
+            state.contacts.push({ id: Date.now(), name: name || 'Unknown', phone, status: 'pending' });
+            el.manualName.value = el.manualPhone.value = '';
+            log(`Added: ${name || 'Unknown'}`, 'info');
+            updateUI();
+        }
+
+        el.clearContacts.onclick = async () => {
+            if (!state.contacts.length) return;
+            if (await showConfirm('Clear All', 'Remove all contacts?')) {
+                state.contacts = [];
+                log('Cleared', 'info');
+                updateUI();
+            }
+        };
+
+        window.deleteContact = id => { state.contacts = state.contacts.filter(c => c.id !== id); updateUI(); };
+
+        // UI Updates
+        function updateUI() {
+            const sent = state.contacts.filter(c => c.status === 'sent').length;
+            const failed = state.contacts.filter(c => c.status === 'failed').length;
+            const pending = state.contacts.filter(c => c.status === 'pending' || c.status === 'sending').length;
+
+            el.totalContacts.textContent = state.contacts.length;
+            el.sentCount.textContent = sent;
+            el.pendingCount.textContent = pending;
+            el.failedCount.textContent = failed;
+
+            el.contactList.innerHTML = state.contacts.length ? state.contacts.map(c => `
+                <div class="contact-item">
+                    <div class="contact-info">
+                        <div class="contact-avatar">${(c.name || 'U')[0].toUpperCase()}</div>
+                        <div class="contact-details">
+                            <div class="contact-name">${esc(c.name)}</div>
+                            <div class="contact-phone">${esc(c.phone)}</div>
+                        </div>
+                    </div>
+                    <div class="contact-status">
+                        <span class="status-badge status-${c.status}">${c.status}</span>
+                        <button class="btn-delete" onclick="deleteContact(${c.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('') : '<div class="empty-state"><i class="fas fa-users-slash"></i><p>No contacts</p></div>';
+
+            el.queueList.innerHTML = state.contacts.length ? state.contacts.map(c => `
+                <div class="contact-item ${c.status === 'sending' ? 'pulse-ring' : ''}">
+                    <div class="contact-info">
+                        <div class="contact-avatar">${(c.name || 'U')[0].toUpperCase()}</div>
+                        <div class="contact-details">
+                            <div class="contact-name">${esc(c.name)}</div>
+                            <div class="contact-phone">${esc(c.phone)}</div>
+                        </div>
+                    </div>
+                    <span class="status-badge status-${c.status}">${c.status}</span>
+                </div>
+            `).join('') : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Empty</p></div>';
+
+            const total = state.contacts.length;
+            const done = state.contacts.filter(c => c.status === 'sent' || c.status === 'failed').length;
+            const pct = total ? Math.round((done / total) * 100) : 0;
+            el.progressFill.style.width = pct + '%';
+            el.progressPercent.textContent = pct + '%';
+
+            updateStartBtn();
+            updateQueueBtns();
+        }
+
+        function updateStartBtn() {
+            el.startSending.disabled = !state.contacts.length || !state.messageTemplate.trim() || !state.api.connected;
+        }
+
+        function updateQueueBtns() {
+            const hasPending = state.contacts.some(c => c.status === 'pending');
+            el.resumeQueue.disabled = !hasPending || state.isSending;
+            el.pauseQueue.disabled = !state.isSending || state.isPaused;
+        }
+
+        function esc(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+        // Sending
+        el.startSending.onclick = async () => {
+            if (!state.api.connected) return showAlert('Error', 'Connect API first');
+            const pending = state.contacts.filter(c => c.status === 'pending').length;
+            if (!await showConfirm('Send', `Send ${pending} messages?`)) return;
+
+            state.contacts.forEach(c => { if (c.status !== 'sent') c.status = 'pending'; });
+            state.isPaused = false;
+            state.isSending = true;
+            updateUI();
+            document.querySelector('[data-tab="queue"]').click();
+            log('Starting...', 'info');
+            sendNext();
+        };
+
+        async function sendNext() {
+            if (state.isPaused || !state.isSending) return;
+
+            const contact = state.contacts.find(c => c.status === 'pending');
+            if (!contact) {
+                state.isSending = false;
+                updateQueueBtns();
+                const sent = state.contacts.filter(c => c.status === 'sent').length;
+                const failed = state.contacts.filter(c => c.status === 'failed').length;
+                log(`Done! Sent: ${sent}, Failed: ${failed}`, 'success');
+                showAlert('Complete', `Sent: ${sent}\nFailed: ${failed}`);
+                return;
+            }
+
+            contact.status = 'sending';
+            updateUI();
+
+            try {
+                const msg = state.messageTemplate.replace(/{name}/g, contact.name || 'Friend').replace(/{phone}/g, contact.phone);
+                const res = await fetch(state.api.url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'send',
+                        username: state.api.username,
+                        password: state.api.password,
+                        to: contact.phone,
+                        from: state.api.senderId,
+                        message: msg
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    contact.status = 'sent';
+                    contact.ref = data.ref;
+                    log(`Sent: ${contact.name}`, 'success');
+                } else {
+                    contact.status = 'failed';
+                    contact.error = data.error;
+                    log(`Failed: ${contact.phone} - ${data.error}`, 'error');
+                }
+            } catch (err) {
+                contact.status = 'failed';
+                contact.error = err.message;
+                log(`Error: ${contact.phone}`, 'error');
+            }
+
+            updateUI();
+            setTimeout(sendNext, 200);
+        }
+
+        el.resumeQueue.onclick = () => { state.isPaused = false; state.isSending = true; updateQueueBtns(); log('Resuming...', 'info'); sendNext(); };
+        el.pauseQueue.onclick = () => { state.isPaused = true; updateQueueBtns(); log('Paused', 'info'); };
+
+        el.resetQueue.onclick = async () => {
+            if (await showConfirm('Reset', 'Reset all to pending?')) {
+                state.isPaused = true;
+                state.isSending = false;
+                state.contacts.forEach(c => c.status = 'pending');
+                log('Reset', 'info');
+                updateUI();
+            }
+        };
+
+        el.exportResults.onclick = () => {
+            if (!state.contacts.length) return showAlert('Empty', 'No data');
+            const csv = 'Name,Phone,Status,Ref,Error\n' + state.contacts.map(c =>
+                `"${c.name}","${c.phone}","${c.status}","${c.ref || ''}","${c.error || ''}"`
+            ).join('\n');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+            a.download = 'sms-results.csv';
+            a.click();
+        };
+
+        // Load saved settings on startup
+        if (loadSettings()) {
+            el.apiUrl.value = state.api.url;
+            el.apiUsername.value = state.api.username;
+            el.apiPassword.value = state.api.password;
+            el.senderId.value = state.api.senderId;
+            log('Settings loaded from memory', 'info');
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
